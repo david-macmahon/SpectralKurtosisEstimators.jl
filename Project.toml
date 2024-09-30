@@ -1,0 +1,8 @@
+name = "SpectralKurtosisEstimators"
+uuid = "43fa2dcf-e260-4b0e-9e84-2eb1e8c3adfe"
+authors = ["David MacMahon <davidm@astro.berkeley.edu>"]
+version = "0.0.0-dev"
+
+[deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
