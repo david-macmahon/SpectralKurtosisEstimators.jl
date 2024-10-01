@@ -53,26 +53,10 @@ function SKEstimator(M::Integer, N::Integer=1, d::Real=1)
     SKEstimator(float(M), float(N), d)
 end
 
-function B1(u2, u3)
-    u3^2 / u2^3
-end
-
-function B1(ske::SKEstimator)
-    B1(ske.u2, ske.u3)
-end
-
-function B2(u2, u4)
-    u4 / u2^2
-end
-
-function B2(ske::SKEstimator)
-    B2(ske.u2, ske.u4)
-end
-
 function g1(ske::SKEstimator)
-    sqrt(B1(ske))
+    ske.u3 / sqrt(skw.u2)^3
 end
 
 function g2(ske::SKEstimator)
-    B2(ske) - 3
+    ske.u4 / ske.u2^2 - 3
 end

@@ -1,13 +1,16 @@
 function pearson_critereon(B1, B2)
     (
-        (B1*(B2+3)^2)
+        (B1 * (B2+3)^2)
         /
-        (4(4B2-3B1)*(2B2-3B1-6))
+        (4(4B2-3B1) * (2B2-3B1-6))
     )
 end
 
 function pearson_critereon(ske::SKEstimator)
-    pearson_critereon(B1(ske), B2(ske))
+    B1 = ske.u3^2 / ske.u2^3
+    B2 = ske.u4 / ske.u2^2
+
+    pearson_critereon(B1, B2)
 end
 
 function pearson_critereon(M, N, d)
