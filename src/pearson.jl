@@ -93,3 +93,18 @@ function pearson_type_vi(A::AbstractArray)
     pearson_type_vi(moment(A, 2), moment(A, 3), moment(A, 4))
 end
 
+# Thresholds
+
+"""
+    thresholds(skd::Distribution, nsigma::Real=3)
+
+Compute upper and lower thresholds for Distribution `skd` that are equivalent to
+`±nsigma` standard deviations of the standard Normal distribution. i.e.
+`𝒩(µ=0, σ=1)`.  `skd` will typically be obtained from `pearson_type_iii` or
+`pearson_type_vi`.  `nsigma` defaults to 3 if not given.
+"""
+function thresholds(skd::Distribution, nsigma::Real=3)
+    nsigma = -abs(nsigma)
+    p = cdf(Normal(), nsigma)
+    quantile.(skd, (p, 1-p))
+end
