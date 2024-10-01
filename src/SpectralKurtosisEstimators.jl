@@ -18,11 +18,11 @@ Compute the spectral kurtosis estimate from:
 
 - `s1`: sum of power
 - `s2`: sum of squared power
-- `M`, ske.M: number of samples summed (e.g. "off-board")
-- `N`, ske.N: number of samples pre-summed (e.g "on-board")
-- `d`, ske.d: shape parameter for original voltage data
-  - `1/2` for real voltages
-  - `1` for complex voltages
+- `M`, `ske.M`: number of samples summed (e.g. "off-board")
+- `N`, `ske.N`: number of samples pre-summed (e.g "on-board")
+- `d`, `ske.d`: shape parameter for original voltage data
+  - Use `1/2` for real voltages
+  - Use `1` for complex voltages
 
 The formulas used here is from equation 8 of:
 "Monthly Notices of the Royal Astronomical Society". 406, L60-L64 (2010)
