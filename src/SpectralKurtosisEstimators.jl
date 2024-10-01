@@ -54,6 +54,10 @@ The formulas used here is from equation 8 of:
 doi:10.1111/j.1745-3933.2010.00882.x
 """
 function skhat(A::AbstractArray, ske::SKEstimator; dims=:)
+    m = prod(size(A)[dims])
+    if m != ske.M
+        @warn "number of values summed ($m) != SKEstimator.M ($(ske.M))"
+    end
     s1 = sum(A; dims)
     s2 = sum(abs2, A; dims)
 
