@@ -25,17 +25,18 @@ end
 
 function pearson_type_iii(u2, u3)
     # The parameter naming convention of the 2010c SK paper differs from the
-    # parameter naming convention of Distribtions.jl for the Gamma distribution
-    # What the paper calls `β` is called `α` in Distribution's Gamma type.
-    # What the paper calls `α` is called `k` in Distribution's Gamma type.
-    # We use the (Romanized) names from the paper (a and B) here add pass them
-    # as `Gamma(B,a)`.  The "localtion" parameter `δ` from the text is not
-    # used by Distrobutions.Gamma, but we use it to offset the distribution.
-    a = u3 / 2u2
-    B = 4u2^3 / u3^2
-    d = 1 - 2u2^2 / u3
+    # parameter naming convention of Distributions.jl for the Gamma
+    # distribution.  The paper uses `β` for the *shape* parameter and `α` for
+    # the *scale* parameter whereas `Distributions.Gamma` uses `α` for the shape
+    # parameter and `θ` for the scale parameter.  To avoid (more) confusion, we
+    # will refer to the shape and scale parameters here as `shape` and `scale`.
+    # The *location* parameter called `δ` in the paper will be called `location`
+    # here.
+    shape = 4u2^3 / u3^2
+    scale = u3 / 2u2
+    location = 1 - 2u2^2 / u3
 
-    Gamma(B, a) + d
+    Gamma(shape, scale) + location
 end
 
 function pearson_type_iii(ske::SKEstimator)
