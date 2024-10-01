@@ -12,7 +12,7 @@ include("pearson.jl")
 
 """
     skhat(s1, s2, M, N=1, d=1)
-  skhat(s1, s2, ske::SKEstimator)
+    skhat(s1, s2, ske::SKEstimator)
 
 Compute the spectral kurtosis estimate from:
 
@@ -21,9 +21,8 @@ Compute the spectral kurtosis estimate from:
 - `M`, ske.M: number of samples summed (e.g. "off-board")
 - `N`, ske.N: number of samples pre-summed (e.g "on-board")
 - `d`, ske.d: shape parameter for original voltage data
-  - `1/2` for real single-pol inputs
-  - `1` for complex single-pol inputs
-  - `2` for complex dual-pol inputs(?)
+  - `1/2` for real voltages
+  - `1` for complex voltages
 
 The formulas used here is from equation 8 of:
 "Monthly Notices of the Royal Astronomical Society". 406, L60-L64 (2010)
@@ -47,9 +46,8 @@ Compute the spectral kurtosis estimate of `A` along `dims`:
 - M: number of samples summed (e.g. "off-board")
 - N: number of samples pre-summed (e.g "on-board")
 - d: shape parameter for original voltage data
-  - 1/2 for real single-pol inputs
-  - 1 for complex single-pol inputs
-  - 2 for complex dual-pol inputs(?)
+  - 1/2 for real voltages
+  - 1 for complex voltages
 
 The formulas used here is from equation 8 of:
 "Monthly Notices of the Royal Astronomical Society". 406, L60-L64 (2010)
