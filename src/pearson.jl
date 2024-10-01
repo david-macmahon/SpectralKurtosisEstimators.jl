@@ -40,7 +40,7 @@ function pearson_type_iii(u2, u3)
 end
 
 function pearson_type_iii(ske::SKEstimator)
-    pearson_critereon(ske) > 1 || error("pearson critereon not > 1")
+    pearson_critereon(ske) > 1 || @warn("pearson critereon not > 1")
 
     pearson_type_iii(ske.u2, ske.u3)
 end
@@ -71,7 +71,7 @@ function pearson_type_vi(u2, u3)
 end
 
 function pearson_type_vi(ske::SKEstimator)
-    pearson_critereon(ske) > 1 || error("pearson critereon not > 1")
+    pearson_critereon(ske) > 1 || @warn("pearson critereon not > 1")
 
     pearson_type_vi(ske.u2, ske.u3)
 end
