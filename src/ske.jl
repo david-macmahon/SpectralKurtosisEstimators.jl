@@ -53,10 +53,7 @@ function SKEstimator(M::Integer, N::Integer=1, d::Real=1)
     SKEstimator(float(M), float(N), d)
 end
 
-function g1(ske::SKEstimator)
-    ske.u3 / sqrt(skw.u2)^3
-end
-
-function g2(ske::SKEstimator)
-    ske.u4 / ske.u2^2 - 3
-end
+mean(ske::SKEstimator) = ske.u1
+var(ske::SKEstimator) = ske.u2
+skewness(ske::SKEstimator) = ske.u3 / sqrt(ske.u2)^3
+kurtosis(ske::SKEstimator) = ske.u4 / ske.u2^2 - 3
