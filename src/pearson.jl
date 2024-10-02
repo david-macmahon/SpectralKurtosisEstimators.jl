@@ -1,4 +1,4 @@
-function pearson_critereon(B1, B2)
+function pearson_criterion(B1, B2)
     (
         (B1 * (B2+3)^2)
         /
@@ -6,19 +6,19 @@ function pearson_critereon(B1, B2)
     )
 end
 
-function pearson_critereon(ske::SKEstimator)
+function pearson_criterion(ske::SKEstimator)
     B1 = ske.u3^2 / ske.u2^3
     B2 = ske.u4 / ske.u2^2
 
-    pearson_critereon(B1, B2)
+    pearson_criterion(B1, B2)
 end
 
-function pearson_critereon(M, N, d)
-    pearson_critereon(SKEstimator(M, N, d))
+function pearson_criterion(M, N, d)
+    pearson_criterion(SKEstimator(M, N, d))
 end
 
-function pearson_critereon(M)
-    pearson_critereon(SKEstimator(M, 1, 1))
+function pearson_criterion(M)
+    pearson_criterion(SKEstimator(M, 1, 1))
 end
 
 # Pearson type III
@@ -43,8 +43,8 @@ function pearson_type_iii(u2, u3, u4)
 end
 
 function pearson_type_iii(ske::SKEstimator)
-    if pearson_critereon(ske) < 1
-        @warn "pearson critereon < 1" _module=nothing _file=nothing
+    if pearson_criterion(ske) < 1
+        @warn "pearson criterion < 1" _module=nothing _file=nothing
     end
 
     pearson_type_iii(ske.u2, ske.u3, ske.u4)
@@ -82,8 +82,8 @@ function pearson_type_vi(u2, u3, u4)
 end
 
 function pearson_type_vi(ske::SKEstimator)
-    if pearson_critereon(ske) < 1
-        @warn "pearson critereon < 1" _module=nothing _file=nothing
+    if pearson_criterion(ske) < 1
+        @warn "pearson criterion < 1" _module=nothing _file=nothing
     end
 
     pearson_type_vi(ske.u2, ske.u3, ske.u4)

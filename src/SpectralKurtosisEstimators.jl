@@ -5,7 +5,7 @@ using SpecialFunctions: loggammadiv
 import Statistics: mean, var
 import StatsBase: skewness, kurtosis
 
-export SKEstimator, skhat, pearson_critereon, pearson_type_iii, pearson_type_vi
+export SKEstimator, skhat, pearson_criterion, pearson_type_iii, pearson_type_vi
 
 include("ske.jl")
 include("pearson.jl")

@@ -26,11 +26,11 @@ ske = SKEstimator(M, N, d)
 
 # Get Pearson Type VI "probablity curve" (PDF approximation) for our esitmator
 # along with a measure of the error in the fourth central moment.
-skdvi, u4errvi = @test_logs (:warn,"pearson critereon < 1") pearson_type_vi(ske)
+skdvi, u4errvi = @test_logs (:warn,"pearson criterion < 1") pearson_type_vi(ske)
 
 # Get Pearson Type III "probablity curve" (PDF approximation) for our esitmator
 # along with a measure of the error in the fourth central moment.
-skdiii, u4erriii = @test_logs (:warn,"pearson critereon < 1") pearson_type_iii(ske)
+skdiii, u4erriii = @test_logs (:warn,"pearson criterion < 1") pearson_type_iii(ske)
 
 # Compute lower and upper thresholds for our "probability curves" corresponding
 # to ±3 sigma of a standard normal distribution.
