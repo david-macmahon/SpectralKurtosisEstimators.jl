@@ -1,5 +1,6 @@
-using SpectralKurtosisEstimators
 using Test
+using SpectralKurtosisEstimators
+using SpectralKurtosisEstimators: relative_error, thresholds
 
 # Unit tests reconstruct some of the entries of Table 1 from this paper:
 #
@@ -14,34 +15,42 @@ nsigma = 3
 lowervi_expected = 0.766_48
 uppervi_expected = 1.283_13
 # Table 1 has 0.18% of u4errvi_expected, but our errors are not percent
-u4errvi_expected = 0.001_8
+u4errvi_expected = -0.001_8
 
 loweriii_expected = 0.767_54
 upperiii_expected = 1.282_12
 # Table 1 has -0.71% of u4erriii_expected, but our errors are absolute value
-u4erriii_expected = 0.007_1
+u4erriii_expected = -0.007_1
 
 # Create SKEstimator for the given paramters
 ske = SKEstimator(M, N, d)
 
-# Get Pearson Type VI "probablity curve" (PDF approximation) for our esitmator
-# along with a measure of the error in the fourth central moment.
-skdvi, u4errvi = @test_logs (:warn,"pearson criterion < 1") pearson_type_vi(ske)
+# Get PearsonTypeVI distribution for our SKEsitmator along with a measure of the
+# error in the fourth central moment.
+#skdvi, u4errvi = @test_logs (:warn,"pearson criterion < 1") pearson_type_vi(ske)
+pdvi = PearsonTypeVI(ske)
+u4errvi = relative_error(pdvi, ske)
 
-# Get Pearson Type III "probablity curve" (PDF approximation) for our esitmator
-# along with a measure of the error in the fourth central moment.
-skdiii, u4erriii = @test_logs (:warn,"pearson criterion < 1") pearson_type_iii(ske)
+# Get PearsonTypeIII distribution for our SKEsitmator along with a measure of
+# the error in the fourth central moment.
+#skdiii, u4erriii = @test_logs (:warn,"pearson criterion < 1") pearson_type_iii(ske)
+pdiii = PearsonTypeIII(ske)
+u4erriii = relative_error(pdiii, ske)
 
 # Compute lower and upper thresholds for our "probability curves" corresponding
 # to ±3 sigma of a standard normal distribution.
-lowervi, uppervi = SpectralKurtosisEstimators.thresholds(skdvi, nsigma)
-loweriii, upperiii = SpectralKurtosisEstimators.thresholds(skdiii, nsigma)
+lowervi, uppervi = thresholds(pdvi, nsigma)
+loweriii, upperiii = thresholds(pdiii, nsigma)
 
 # Test that everything agrees with the Table 1 entries to the given precision
-@test lowervi ≈ lowervi_expected atol=0.000_005
-@test uppervi ≈ uppervi_expected atol=0.000_005
-@test u4errvi ≈ u4errvi_expected atol=0.000_05
+@testset "PearsonTypeVI " begin
+    @test lowervi ≈ lowervi_expected atol=0.000_005
+    @test uppervi ≈ uppervi_expected atol=0.000_005
+    @test u4errvi ≈ u4errvi_expected atol=0.000_05
+end
 
-@test loweriii ≈ loweriii_expected atol=0.000_005
-@test upperiii ≈ upperiii_expected atol=0.000_005
-@test u4erriii ≈ u4erriii_expected atol=0.000_05
+@testset "PearsonTypeIII" begin
+    @test loweriii ≈ loweriii_expected atol=0.000_005
+    @test upperiii ≈ upperiii_expected atol=0.000_005
+    @test u4erriii ≈ u4erriii_expected atol=0.000_05
+end

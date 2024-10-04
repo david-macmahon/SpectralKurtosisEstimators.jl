@@ -53,7 +53,18 @@ function SKEstimator(M::Integer, N::Integer=1, d::Real=1)
     SKEstimator(float(M), float(N), d)
 end
 
+# Statistics for SKEstimator
 mean(ske::SKEstimator) = ske.u1
 var(ske::SKEstimator) = ske.u2
 skewness(ske::SKEstimator) = ske.u3 / sqrt(ske.u2)^3
 kurtosis(ske::SKEstimator) = ske.u4 / ske.u2^2 - 3
+
+# Constructor PearsoneDistributions from an SKEstimator
+PearsonTypeIII(ske::SKEstimator) = PearsonTypeIII(ske.u2, ske.u3)
+PearsonTypeVI(ske::SKEstimator) = PearsonTypeVI(ske.u2, ske.u3)
+
+# Relative error functions for PearsonDistribution `d` and SKEstimator `ske`
+relative_error(d::PearsonAnalyticDistribution, ske::SKEstimator) = relative_error(d, ske.u4)
+
+# Relative error for PearsonAnalyticDistribution type `D` for SKEstimator `ske`
+relative_error(D::Type{<:PearsonAnalyticDistribution}, ske::SKEstimator) = relative_error(D(ske), ske.u4)

@@ -2,11 +2,15 @@ module SpectralKurtosisEstimators
 
 using SpecialFunctions, Distributions
 using SpecialFunctions: loggammadiv
-import Statistics: mean, var
+
+import Statistics: mean, var, quantile
 import StatsBase: skewness, kurtosis
+import Distributions: cdf, pdf
 
-export SKEstimator, skhat, pearson_criterion, pearson_type_iii, pearson_type_vi
+export SKEstimator, skhat, pearson_criterion
+export PearsonTypeVI, PearsonTypeIII
 
+include("pearson_distributions.jl")
 include("ske.jl")
 include("pearson.jl")
 
