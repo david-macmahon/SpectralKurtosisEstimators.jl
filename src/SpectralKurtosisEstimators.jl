@@ -8,7 +8,7 @@ import StatsBase: skewness, kurtosis
 import Distributions: cdf, pdf
 
 export SKEstimator, skhat, pearson_criterion
-export PearsonTypeVI, PearsonTypeIII
+export PearsonTypeVI, PearsonTypeIII, PearsonTypeIV
 
 include("pearson_distributions.jl")
 include("ske.jl")

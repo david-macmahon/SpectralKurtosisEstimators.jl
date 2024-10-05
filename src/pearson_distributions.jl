@@ -7,6 +7,12 @@ abstract type PearsonDistribution end
 Base.broadcastable(d::PearsonDistribution) = Ref(d)
 
 """
+Supertype for types that use approximated functions to compute `pdf`, `cdf`, and
+`quantile`.  `PearsonTypeIV` is an (the only) example of this.
+"""
+abstract type PearsonApproximatedDistribution <: PearsonDistribution end
+
+"""
 Supertype for types that can be represented by a known `Distribution`.  For
 example, the `PearsonTypeIII` distribution is a location shifted `Gamma`
 distribution and the `PearsonTypeVI` distribution is a location shifted
@@ -75,4 +81,5 @@ end
 # Concrete types
 
 include("pearson_type_iii.jl")
+include("pearson_type_iv.jl")
 include("pearson_type_vi.jl")

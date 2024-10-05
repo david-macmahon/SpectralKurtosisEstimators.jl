@@ -54,3 +54,20 @@ end
     @test upperiii ≈ upperiii_expected atol=0.000_005
     @test u4erriii ≈ u4erriii_expected atol=0.000_05
 end
+
+# Test calculated PearsonTypeIV fields using examples from the 2010a paper for
+# various values of M (and N=1, d=1).
+@testset "PearsonTypeIV " begin
+    @testset "M=$M" for (M,  expected) in (
+        (32,   (; m=  5.760, ν= -21.847, a=0.389, λ=0.108)),
+        (512,  (; m= 20.125, ν= -32.442, a=0.410, λ=0.652)),
+        (4096, (; m=132.094, ν=-211.441, a=0.393, λ=0.683)),
+        (8192, (; m=260.092, ν=-416.381, a=0.392, λ=0.685)),
+    )
+        piv = PearsonTypeIV(SKEstimator(M))
+        @test piv.m ≈ expected.m atol=0.000_5
+        @test piv.ν ≈ expected.ν atol=0.000_5
+        @test piv.a ≈ expected.a atol=0.000_5
+        @test piv.λ ≈ expected.λ atol=0.000_5
+    end
+end

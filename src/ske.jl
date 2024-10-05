@@ -66,6 +66,7 @@ end
 
 # Constructor PearsoneDistributions from an SKEstimator
 PearsonTypeIII(ske::SKEstimator) = PearsonTypeIII(ske.u2, ske.u3)
+PearsonTypeIV(ske::SKEstimator) = PearsonTypeIV(ske.u1, ske.u2, ske.u3, ske.u4)
 PearsonTypeVI(ske::SKEstimator) = PearsonTypeVI(ske.u2, ske.u3)
 
 # Relative error functions for PearsonDistribution `d` and SKEstimator `ske`
