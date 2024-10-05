@@ -14,6 +14,21 @@ distribution and the `PearsonTypeVI` distribution is a location shifted
 """
 abstract type PearsonAnalyticDistribution <: PearsonDistribution end
 
+"""
+Compute the Pearson criterion from the second, third, and fourth central
+moments `u2`, `u3`, `u4`, resp.
+"""
+function pearson_criterion(u2, u3, u4)
+    B1 = u3^2 / u2^3
+    B2 = u4 / u2^2
+
+    (
+        (B1 * (B2+3)^2)
+        /
+        (4(4B2-3B1) * (2B2-3B1-6))
+    )
+end
+
 # Add statistical/distribution methods
 
 mean(d::PearsonAnalyticDistribution) = mean(distribution(d))

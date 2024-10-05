@@ -59,6 +59,11 @@ var(ske::SKEstimator) = ske.u2
 skewness(ske::SKEstimator) = ske.u3 / sqrt(ske.u2)^3
 kurtosis(ske::SKEstimator) = ske.u4 / ske.u2^2 - 3
 
+# Pearson criterion for an SKEstimator
+function pearson_criterion(ske::SKEstimator)
+    pearson_criterion(ske.u2, ske.u3, ske.u4)
+end
+
 # Constructor PearsoneDistributions from an SKEstimator
 PearsonTypeIII(ske::SKEstimator) = PearsonTypeIII(ske.u2, ske.u3)
 PearsonTypeVI(ske::SKEstimator) = PearsonTypeVI(ske.u2, ske.u3)

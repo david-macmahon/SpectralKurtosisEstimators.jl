@@ -12,7 +12,6 @@ export PearsonTypeVI, PearsonTypeIII
 
 include("pearson_distributions.jl")
 include("ske.jl")
-include("pearson.jl")
 
 """
     skhat(s1, s2, M, N=1, d=1)
