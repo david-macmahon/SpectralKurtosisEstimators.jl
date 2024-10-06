@@ -2,10 +2,8 @@ using Test
 using SpectralKurtosisEstimators
 using SpectralKurtosisEstimators: relative_error, thresholds
 
-# Unit tests reconstruct some of the entries of Table 1 from this paper:
-#
-# Nita, G. M. & Gary, D. E. [2010b] MNRAS 406, L60,
-# doi:10.1111/j.1745-3933.2010.00882.x.
+# Unit tests reconstruct some of the entries of Table 1 of
+# [Nita [2010b]](https://doi.org/10.1111/j.1745-3933.2010.00882.x)
 
 M = 300
 N = 10
@@ -19,7 +17,6 @@ u4errvi_expected = -0.001_8
 
 loweriii_expected = 0.767_54
 upperiii_expected = 1.282_12
-# Table 1 has -0.71% of u4erriii_expected, but our errors are absolute value
 u4erriii_expected = -0.007_1
 
 # Create SKEstimator for the given paramters
@@ -27,13 +24,11 @@ ske = SKEstimator(M, N, d)
 
 # Get PearsonTypeVI distribution for our SKEsitmator along with a measure of the
 # error in the fourth central moment.
-#skdvi, u4errvi = @test_logs (:warn,"pearson criterion < 1") pearson_type_vi(ske)
 pdvi = PearsonTypeVI(ske)
 u4errvi = relative_error(pdvi, ske)
 
 # Get PearsonTypeIII distribution for our SKEsitmator along with a measure of
 # the error in the fourth central moment.
-#skdiii, u4erriii = @test_logs (:warn,"pearson criterion < 1") pearson_type_iii(ske)
 pdiii = PearsonTypeIII(ske)
 u4erriii = relative_error(pdiii, ske)
 
@@ -55,8 +50,8 @@ end
     @test u4erriii ≈ u4erriii_expected atol=0.000_05
 end
 
-# Test calculated PearsonTypeIV fields using examples from the 2010a paper for
-# various values of M (and N=1, d=1).
+# Test calculated PearsonTypeIV fields for various values of M (and N=1, d=1)
+# using examples from figure 5 of [Nita [2010a]](https://doi.org/10.1086/652409)
 @testset "PearsonTypeIV " begin
     @testset "M=$M" for (M,  expected) in (
         (32,   (; m=  5.760, ν= -21.847, a=0.389, λ=0.108)),
