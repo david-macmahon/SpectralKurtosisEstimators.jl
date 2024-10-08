@@ -146,8 +146,12 @@ following methods are supported for `PearsonTypeIV` instances:
 - `pdf(d::PearsonTypeIV, x)` returns the probability density function of
   distribution `d` evaluated at `x`
 
-Notably missing are `distribution`, `relative_error`, and (for now) CDF related
-functions `cdf`, `quantile`, and `thresholds`.
+Understandably missing from that list are `distribution` (`PearsonTypeIV` has no
+corresponding distribution from `Distributions.jl`) and `relative_error`
+(`PearsonTypeIV` has no fourth moment error, by definition, but in theory
+`relatuve_error` could return the error in the fifth moment).  More glaringly
+missing are CDF related functions `cdf`, `quantile`, and `thresholds`, which
+will be added in a future version.
 
 ### Pearson criterion
 
