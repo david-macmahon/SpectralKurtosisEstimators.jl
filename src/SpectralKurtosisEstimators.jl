@@ -40,31 +40,43 @@ function skhat(s1, s2, ske::SKEstimator)
 end
 
 """
-    skhat(A::AbtractArray, ske::SKEstimator; dims=:)
+    skhat(A::AbstractArray, ske::SKEstimator; dims=ndims(A))
 
-Compute the spectral kurtosis estimate of `A` along `dims`:
+Compute generalized spectral kutosis estimate of `A` along `dims` as specified
+by the `M` and `N` fields of `ske`.  `dims` must be an integer and defaults to
+the last dimension of `A`.  `ske.d` should be set to half the number of real
+samples that were pre-summed into each element of `A`.
 
-- s1: sum of power
-- s2: sum of squared power
-- M: number of samples summed (e.g. "off-board")
-- N: number of samples pre-summed (e.g "on-board")
-- d: shape parameter for original voltage data
-  - 1/2 for real voltages
-  - 1 for complex voltages
+Returns named tuple `(; s1, sk)`, where `s1` is the summed power and `sk` is the
+spectral kurtosis.
 
-The formulas used here is from equation 8 of:
-"Monthly Notices of the Royal Astronomical Society". 406, L60-L64 (2010)
-doi:10.1111/j.1745-3933.2010.00882.x
+`s1` and `sk` will have the same dimensions as `A` except that dimension `dims`
+will be `size(A, dims) ÷ (M*N)`.  If `M*N` does not divide `size(A, dims)`
+evenly then some number (less than `M*N`) of samples from the end of the `dims`
+dimension of `A` will not be used.
 """
-function skhat(A::AbstractArray, ske::SKEstimator; dims=:)
-    m = prod(size(A)[dims])
-    if m != ske.M
-        @warn "number of values summed ($m) != SKEstimator.M ($(ske.M))"
-    end
-    s1 = sum(A; dims)
-    s2 = sum(abs2, A; dims)
+function skhat(A::AbstractArray, ske::SKEstimator; dims::Integer=ndims(A))
+    axesA = axes(A)
+    M = ske.M
+    N = ske.N
+    T = length(axesA[dims]) ÷ (M*N)
+    T > 0 || error("$(size(A,dims)) is too few samples for M=$(M) and N=$(N)")
 
-    skhat(s1, s2, ske)
+    Ausable = if M*N*T == size(A, dims)
+        A
+    else
+        view(A, axesA[1:dims-1]..., 1:M*N*T, axesA[dims+1:end]...)
+    end
+
+    Anmt = reshape(Ausable, axesA[1:dims-1]..., N, M, T, axesA[dims+1:end]...)
+
+    s0 = dropdims(sum(Anmt; dims); dims)
+    s1 = dropdims(sum(s0; dims); dims)
+    s2 = dropdims(sum(abs2, s0; dims); dims)
+
+    sk = skhat(s1, s2, ske);
+
+    (; s1, sk)
 end
 
 end # module SpectralKurtosisEstimators

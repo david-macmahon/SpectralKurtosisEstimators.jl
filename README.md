@@ -166,31 +166,51 @@ here:
 
 ## Computing spectral kurtosis estimates
 
-Spectral kurtosis estimates can by computed by calling the `skhat` function,
-which has these methods:
+The `skhat` function provides various methods for computing spectral kurtosis
+estimates.
+
+### SK from pre-calculated `s1` and `s2`
+
+Spectral kurtosis estimates can by computed for pre-calculated `s1` and `s2` by
+calling one of these `skhat` methods:
 
     skhat(s1, s2, M, N=1, d=1)
     skhat(s1, s2, ske::SKEstimator)
-    skhat(A, ske::SKEstimator; dims=:)
 
-Compute the spectral kurtosis estimate from:
+where:
 
 - `s1`: sum of power
 - `s2`: sum of squared power
 - `M`, `ske.M`: number of samples summed (e.g. "off-board")
 - `N`, `ske.N`: number of samples pre-summed (e.g "on-board")
 - `d`, `ske.d`: shape parameter for original voltage data
-  - Use `1/2` for real voltages
-  - Use `1` for complex voltages
+- `d`, `ske.d`: half the number of squared voltages (pre-summed) per input
+  sample
+  - Use `1/2` for single-pol real voltages
+  - Use `1` for Stokes I from real voltages or single-pol complex voltages
+  - Use `2` for Stokes I from complex voltages
 
-In lieu of `s1` and `s2`, you can pass Array `A` and keyword argument `dims` to
-have `s1` and `s1` be computed automatically.  Currently this method allocates
-`s1` and `s2` on each call.  The returned Array will have the same number of
-dimensions as `A`, but dimensions in `dims` will be 1.
+These methods can be used with broadcast to store the output into a suitably
+sized preallocated Array.
 
-All of these methods allocate the output Array each call.  In-place versions of
-these methods do not yet exist, but broadcast can be used to store the result in
-a suitable existing array without additional allocations.
+### SK for Array
 
-    sk = similar(s1)
-    sk .= skhat.(s1, s2, Ref(ske))
+The spectral kurtosis estimates of an Array cam be computed by calling this
+`skhat` method:
+
+    skhat(A, ske::SKEstimator; dims=ndims(A))
+
+This computes the generalized spectral kurtosis estimate of `A` along `dims` as
+specified by the `M` and `N` fields of `ske`.  `dims` must be an integer and
+defaults to the last dimension of `A`.  `ske.d` should be set to half the number
+of real samples that were pre-summed into each element of `A`.
+
+Named tuple `(; s1, sk)` is returned, where `s1` is the summed power and `sk` is
+the spectral kurtosis.
+
+`s1` and `sk` will have the same dimensions as `A` except that dimension `dims`
+will be `size(A, dims) ÷ (M*N)`.  If `M*N` does not divide `size(A, dims)`
+evenly then some number (less than `M*N`) of samples from the end of the `dims`
+dimension of `A` will not be used.
+
+This method allocate the intermediate and output Arrays each call.
