@@ -1,7 +1,6 @@
 module SpectralKurtosisEstimators
 
 using SpecialFunctions, Distributions
-using SpecialFunctions: loggammadiv
 
 import Statistics: mean, var, quantile
 import StatsBase: skewness, kurtosis
