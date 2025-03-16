@@ -47,18 +47,18 @@ non-generalized estimator is a special case of the generalized estimator with
 
 The spectral kurtosis estimator also has a *shape* parameter, conventionally
 referred to as `d`. This shape parameter is the same as the shape parameter of
-the [gamma distribution](https://en.wikipedia.org/wiki/Gamma_distribution) of
-the input samples (i.e. the addends of inner sum).  The value of `d` is half the
-number of squared voltages that were added together per input sample.  Some
-common values for `d` are shown in the table below, where `S` is the number of
-squared voltages that were summed per input sample.
+the [gamma distribution](https://en.wikipedia.org/wiki/Gamma_distribution)
+(i.e. half the number of squares summed into each sample).  In signal processing
+terms, `d` is half the number of power values (i.e. squared voltage values) that
+were summed together per input sample.  Some common values for `d` are shown in
+the table here:
 
-| Polarization | Voltages |  d  |
-|:-------------|:---------|:---:|
-| Single       | Real     | 1/2 |
-| Stokes I     | Real     |  1  |
-| Single       | Complex  |  1  |
-| Stokes I     | Complex  |  2  |
+| Polarization | Voltages |  d  | Summation per sample                        |
+|:-------------|:---------|:---:|:--------------------------------------------|
+| Single       | Real     | 1/2 | `V^2`                                       |
+| Stokes I     | Real     |  1  | `Vx^2 + Vy^2`                               |
+| Single       | Complex  |  1  | `Re(V)^2 + Im(V)^2`                         |
+| Stokes I     | Complex  |  2  | `Re(Vx)^2 + Im(Vx)^2 + Re(Vy)^2 + Im(Vy)^2` |
 
 Not surprisingly, `M`, `N`, and `d` are the three parameters of the
 `SKEstimator` constructor:
@@ -69,7 +69,8 @@ where:
 
 - `M`: number of outer sum addends
 - `N`: number of inner sum addends
-- `d`: half the number of squared voltages (pre-summed) per input sample
+- `d`: half the number of squared voltages summed together per input sample (aka
+  the *shape* parameter).
 
 ## Pearson distributions
 
@@ -103,38 +104,42 @@ preferable for outlier detection.
 Pearson Type VI and Pearson Type III distributions are represented by the
 `PearsonTypeVI` and `PearsonTypeIII` types, resp.  They share a common abstract
 super-type, `PearsonaAnalyticDistribution`, because they can be represented by
-will known distributions supported by `Distributions.jl`.  The following
+well known distributions supported by `Distributions.jl`.  The following
 methods are supported for instances of these types:
 
-- `mean(d::PearsonAnaliticType)` returns the mean of distribution `d`
-- `var(d::PearsonAnaliticType)` returns the variance of distribution `d`
-- `skewness(d::PearsonAnaliticType)` returns the skewness of distribution `d`
-- `kurtosis(d::PearsonAnaliticType)` returns the excess kurtosis of distribution
-  `d`
-- `pdf(d::PearsonAnaliticType, x)` returns the probability density function of
-  distribution `d` evaluated at `x`
-- `cdf(d::PearsonAnaliticType, x)` returns the cumulative distribution function
-of distribution `d` evaluated at `x`
-- `quantile(d::PearsonAnaliticType, p)` returns `x` such that `cdf(d, x) == p`
-  (i.e. the inverse cumulative distribution function)
-- `thresholds(d::PearsonAnaliticType, nsigma)` returns the lower and upper
-  values where the CDF of `d` equals the CDF of the standard normal
+- `mean(d::PearsonAnalyticDistribution)` returns the mean of distribution `d`
+- `var(d::PearsonAnaliyicDistribution)` returns the variance of distribution `d`
+- `skewness(d::PearsonAnalyticDistribution)` returns the skewness of
+  distribution `d`
+- `kurtosis(d::PearsonAnalyticDistribution)` returns the excess kurtosis of
+  distribution `d`
+- `pdf(d::PearsonAnalyticDistribution, x)` returns the probability density
+  function of distribution `d` evaluated at `x`
+- `cdf(d::PearsonAnalyticDistribution, x)` returns the cumulative distribution
+  function of distribution `d` evaluated at `x`
+- `quantile(d::PearsonAnalyticDistribution, p)` returns `x` such that `cdf(d, x)
+  == p` (i.e. the inverse cumulative distribution function)
+- `thresholds(d::PearsonAnalyticDistribution, nsigma)` returns the lower and
+  upper values where the CDF of `d` equals the CDF of the standard normal
   distribution at `±nsigma`.
-- `distribution(d::PearsonAnalyticType)` returns a `Distributions.jl`
+- `distribution(d::PearsonAnalyticDistribution)` returns a `Distributions.jl`
   distribution corresponding to `d`.
-- `relative_error(d::PearsonAnalyticType, u4)` returns the relative error
-  between the fourth moment of `d` and `u4` (typically the fourth moment of an
-  `SKEstimator`)
-- `relative_error(d::PearsonAnalyticType, ske::SKEstimator)` returns
+- `relative_error(d::PearsonAnalyticDistribution, u4)` returns the relative
+  error between the fourth moment of `d` and `u4` (typically the fourth moment
+  of an `SKEstimator`)
+- `relative_error(d::PearsonAnalyticDistribution, ske::SKEstimator)` returns
   `relative_error(d, ske.u4)`
 
 ### Pearson Type IV distribution
 
 Pearson Type IV distributions match all of the first four moments.  It is only
 possible to construct Pearson Type IV distributions if certain conditions are
-met.  Pearson provided a formula, known as the *Pearson criterion*, that can be
-used to determine whether the Pearson Type IV distribution may be constructed
-for a given set of moments.
+met.  Pearson provided a formula, known as the *Pearson criterion* (see below),
+that can be used to determine whether a Pearson Type IV distribution may be
+constructed from a distribution's first four moments.  It is worth noting that
+when `Nd` (i.e. the product of spectral kurtosis estimator parameters `N` and
+`d`) is greater than 14 it is not possible to construct a Pearson Type IV
+distribution.
 
 A Pearson Type IV distribution is represented by the `PearsonTypeIV` type.  The
 following methods are supported for `PearsonTypeIV` instances:
@@ -149,7 +154,7 @@ following methods are supported for `PearsonTypeIV` instances:
 Understandably missing from that list are `distribution` (`PearsonTypeIV` has no
 corresponding distribution from `Distributions.jl`) and `relative_error`
 (`PearsonTypeIV` has no fourth moment error, by definition, but in theory
-`relatuve_error` could return the error in the fifth moment).  More glaringly
+`relative_error` could return the error in the fifth moment).  More glaringly
 missing are CDF related functions `cdf`, `quantile`, and `thresholds`, which
 will be added in a future version.
 
@@ -165,7 +170,7 @@ here:
 | Pearson criterion | Pearson distribution(s) |
 |:-----------------:|:------------------------|
 |      `κ < 0` .    | Type I (not supported)  |
-|    `0 < κ < 1`    | Type VI                 |
+|    `0 < κ < 1`    | Type IV                 |
 |      `1 < κ`      | Type VI, Type III       |
 
 ## Computing spectral kurtosis estimates
@@ -173,9 +178,9 @@ here:
 The `skhat` function provides various methods for computing spectral kurtosis
 estimates.
 
-### SK from pre-calculated `s1` and `s2`
+### Spectral kurtosis estimates from pre-calculated `s1` and `s2`
 
-Spectral kurtosis estimates can by computed for pre-calculated `s1` and `s2` by
+Spectral kurtosis estimates can by computed from pre-calculated `s1` and `s2` by
 calling one of these `skhat` methods:
 
     skhat(s1, s2, M, N=1, d=1)
@@ -185,19 +190,18 @@ where:
 
 - `s1`: sum of power
 - `s2`: sum of squared power
-- `M`, `ske.M`: number of samples summed (e.g. "off-board")
-- `N`, `ske.N`: number of samples pre-summed (e.g "on-board")
-- `d`, `ske.d`: shape parameter for original voltage data
+- `M`, `ske.M`: number of samples summed (e.g. "off-board" or "outer sum")
+- `N`, `ske.N`: number of samples pre-summed (e.g "on-board" or "inner sum")
 - `d`, `ske.d`: half the number of squared voltages (pre-summed) per input
   sample
   - Use `1/2` for single-pol real voltages
-  - Use `1` for Stokes I from real voltages or single-pol complex voltages
+  - Use `1` for single-pol complex voltages or Stokes I from real voltages
   - Use `2` for Stokes I from complex voltages
 
 These methods can be used with broadcast to store the output into a suitably
-sized preallocated Array.
+sized pre-allocated Array.
 
-### SK for Array
+### Spectral kurtosis estimates of data in an Array
 
 The spectral kurtosis estimates of an Array cam be computed by calling this
 `skhat` method:
