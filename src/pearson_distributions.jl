@@ -58,7 +58,7 @@ function distribution end
 
 Returns the (signed) relative error of `d`'s first non-fitted central moment and
 the known coresponding central moment value `known`.  For `PearsonTypeIII` and
-`PearsonTypeIV`, `known` should be the known fourth central moment.
+`PearsonTypeVI`, `known` should be the known fourth central moment.
 """
 function relative_error end
 

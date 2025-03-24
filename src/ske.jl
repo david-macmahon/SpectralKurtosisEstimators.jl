@@ -59,7 +59,11 @@ var(ske::SKEstimator) = ske.u2
 skewness(ske::SKEstimator) = ske.u3 / sqrt(ske.u2)^3
 kurtosis(ske::SKEstimator) = ske.u4 / ske.u2^2 - 3
 
-# Pearson criterion for an SKEstimator
+"""
+    pearson_criterion(ske) -> Real
+
+Return the Pearson criterion for SKEstimator `ske`.
+"""
 function pearson_criterion(ske::SKEstimator)
     pearson_criterion(ske.u2, ske.u3, ske.u4)
 end
