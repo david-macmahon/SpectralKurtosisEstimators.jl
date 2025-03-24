@@ -82,7 +82,9 @@ The papers listed above analytically derive formulas for the first four moments
 of the spectral kurtosis estimator given the spectral kurtosis estimators `M`,
 `N`, and `d`.  These moments can be used to create Pearson distributions of
 various types.  This package supports Pearson Type IV, Pearson Type VI, and
-Pearson Type III distributions.
+Pearson Type III distributions.  The `pearson_distribution` function returns the
+most suitable Pearson distribution for a given `SKEstimator`.  All Pearson
+distribution objects have a common abstract supertype of `PearsonDistribution`.
 
 ### Pearson Type VI and Pearson Type III distributions
 
@@ -172,6 +174,17 @@ here:
 |      `κ < 0` .    | Type I (not supported)  |
 |    `0 < κ < 1`    | Type IV                 |
 |      `1 < κ`      | Type VI, Type III       |
+
+### The `pearson_distribution` function
+
+The `pearson_distribution` function uses `pearson_criterion` and, if necessary,
+`relative_error` to determine the most suitable Pearson distribution for a given
+`SKEstimator` and returns an instance of that distribution corresponding to the
+given `SKEstimator`.  If the `pearson_criterion`, `κ`, is less than 0, an error
+is thrown.  If it is between 0 and 1, a `PearsonTypeIV` instance is returned.
+Otherwise, the relative errors of `PearsonTypeVI` and `PearsonTypeIII`
+distributions for the given `SKEstimator` are compared and the distribution
+object with the lower relative error is returned.
 
 ## Computing spectral kurtosis estimates
 

@@ -68,7 +68,34 @@ function pearson_criterion(ske::SKEstimator)
     pearson_criterion(ske.u2, ske.u3, ske.u4)
 end
 
-# Constructor PearsoneDistributions from an SKEstimator
+"""
+    pearson_distribution(ske) -> PearsonDistribution
+
+Construct the optimal PearsonDistribution for SKEstimator `ske`.  If the Pearson
+criterion for `ske` is between 0 and 1, a `PearsonTypeIV` distribution will be
+returned.  If the Pearson criterion is 1 or greater, the `PearsonTypeIII` or
+`PearsonTypeVI` distribution for `ske` with the lower relative error in the
+fourth moment will be returned.
+"""
+function pearson_distribution(ske::SKEstimator)
+    κ = pearson_criterion(ske)
+    # TODO Verify the correct thing to do when κ == 1
+    if 0 < κ < 1
+        PearsonTypeIV(ske)
+    elseif 1 <= κ
+        err3 = relative_error(PearsonTypeIII, ske)
+        err6 = relative_error(PearsonTypeVI, ske)
+        if err3 < err6
+            PearsonTypeIII(ske)
+        else
+            PearsonTypeVI(ske)
+        end
+    else
+        @error "Pearson criteron $κ < 0 not supported"
+    end
+end
+
+# Construct specific PearsonDistributions from an SKEstimator
 PearsonTypeIII(ske::SKEstimator) = PearsonTypeIII(ske.u2, ske.u3)
 PearsonTypeIV(ske::SKEstimator) = PearsonTypeIV(ske.u1, ske.u2, ske.u3, ske.u4)
 PearsonTypeVI(ske::SKEstimator) = PearsonTypeVI(ske.u2, ske.u3)
