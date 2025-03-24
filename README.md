@@ -152,13 +152,27 @@ following methods are supported for `PearsonTypeIV` instances:
 - `kurtosis(d::PearsonTypeIV)` returns the excess kurtosis of distribution `d`
 - `pdf(d::PearsonTypeIV, x)` returns the probability density function of
   distribution `d` evaluated at `x`
+- `cdf(d::PearsonTypeIV, x)` returns the cumulative distribution function of
+  distribution `d` evaluated at `x`
+- `quantile(d::PearsonTypeIV, p)` returns `x` such that `cdf(d, x) == p` (i.e.
+  the inverse cumulative distribution function)
+- `thresholds(d::PearsonTypeIV, nsigma)` returns the lower and upper values
+  where the CDF of `d` equals the CDF of the standard normal distribution at
+  `±nsigma`.
 
 Understandably missing from that list are `distribution` (`PearsonTypeIV` has no
 corresponding distribution from `Distributions.jl`) and `relative_error`
 (`PearsonTypeIV` has no fourth moment error, by definition, but in theory
-`relative_error` could return the error in the fifth moment).  More glaringly
-missing are CDF related functions `cdf`, `quantile`, and `thresholds`, which
-will be added in a future version.
+`relative_error` could return the error in the fifth moment).
+
+The `cdf` of a `PearsonTypeIV` distribution is computed using a function that
+approximates the integral of the PDF.  This approximated function is only valid
+over a finite domain, which can be automatically calculated or supplied by the
+caller.  The `cdf` function will return `0.0` for any input below this domain
+and `1.0` for any input above this domain.  Likewise, the `quantile` function
+will return the lower limit of the domain for any input `p` that is below
+`cdf(d, minimum(domain))` or the upper limit of the domain for any input `p`
+that is above `cdf(d, maximum(domain))`.  See the doc string for more details.
 
 ### Pearson criterion
 

@@ -20,6 +20,12 @@ distribution and the `PearsonTypeVI` distribution is a location shifted
 """
 abstract type PearsonAnalyticDistribution <: PearsonDistribution end
 
+# Concrete types
+
+include("pearson_type_iii.jl")
+include("pearson_type_iv.jl")
+include("pearson_type_vi.jl")
+
 """
 Compute the Pearson criterion from the second, third, and fourth central
 moments `u2`, `u3`, `u4`, resp.
@@ -69,17 +75,11 @@ function relative_error end
 
 Compute upper and lower thresholds for distribution `d` that are equivalent to
 `±nsigma` standard deviations of the standard normal distribution i.e.  `𝒩(µ=0,
-σ=1)`.  `d` may be a `PearsonDistribution` or a `Distributions.Distribution`.
-`nsigma` defaults to 3 if not given.
+σ=1)`.  `d` may be a `PearsonAnalyticDistribution`, a `PearsonTypeIV`, or a
+`Distributions.Distribution`.  `nsigma` defaults to 3 if not given.
 """
-function thresholds(pd::Union{PearsonDistribution,Distribution}, nsigma::Real=3)
+function thresholds(pd::Union{PearsonAnalyticDistribution,PearsonTypeIV,Distribution}, nsigma::Real=3)
     nsigma = -abs(nsigma)
     p = cdf(Normal(), nsigma)
     quantile.(pd, (p, 1-p))
 end
-
-# Concrete types
-
-include("pearson_type_iii.jl")
-include("pearson_type_iv.jl")
-include("pearson_type_vi.jl")

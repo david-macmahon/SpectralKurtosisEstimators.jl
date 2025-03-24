@@ -1,6 +1,10 @@
 module SpectralKurtosisEstimators
 
-using SpecialFunctions, Distributions
+using SpecialFunctions
+using Distributions
+using ApproxFun
+using Memoize
+using Roots
 
 import Statistics: mean, var, quantile
 import StatsBase: skewness, kurtosis
