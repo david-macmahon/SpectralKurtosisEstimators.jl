@@ -67,7 +67,7 @@ function pdf(::PearsonTypeIV{m,ν,a,λ}, x) where {m,ν,a,λ}
 end
 
 """
-    _cdflimits(d::PearsonTypeIV, z=eps()^2) -> (lo, hi)
+    _cdflimits(d::PearsonTypeIV, z=eps()) -> (lo, hi)
 
 Return lower and upper limits of the CDF of `d` suitable for use with
 `_cdffun` (as well as `cdf` and `quantile`).  These limits are determined by
