@@ -110,6 +110,8 @@ well known distributions supported by `Distributions.jl`.  The following
 methods are supported for instances of these types:
 
 - `mean(d::PearsonAnalyticDistribution)` returns the mean of distribution `d`
+- `std(d::PearsonAnaliyicDistribution)` returns the standard deviation of
+  distribution `d`
 - `var(d::PearsonAnaliyicDistribution)` returns the variance of distribution `d`
 - `skewness(d::PearsonAnalyticDistribution)` returns the skewness of
   distribution `d`
@@ -147,6 +149,7 @@ A Pearson Type IV distribution is represented by the `PearsonTypeIV` type.  The
 following methods are supported for `PearsonTypeIV` instances:
 
 - `mean(d::PearsonTypeIV)` returns the mean of distribution `d`
+- `std(d::PearsonTypeIV)` returns the standard deviation of distribution `d`
 - `var(d::PearsonTypeIV)` returns the variance of distribution `d`
 - `skewness(d::PearsonTypeIV)` returns the skewness of distribution `d`
 - `kurtosis(d::PearsonTypeIV)` returns the excess kurtosis of distribution `d`

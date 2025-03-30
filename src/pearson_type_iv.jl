@@ -36,6 +36,7 @@ end
 # Add statistical/distribution methods
 
 mean(d::PearsonTypeIV) = 1.0
+std(d::PearsonTypeIV) = sqrt(var(d))
 var(d::PearsonTypeIV) = d.u2
 skewness(d::PearsonTypeIV) = d.u3 / d.u2^(3/2)
 kurtosis(d::PearsonTypeIV) = d.u4 / d.u2^2 - 3

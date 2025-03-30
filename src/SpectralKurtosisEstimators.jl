@@ -6,7 +6,7 @@ using ApproxFun
 using Memoize
 using Roots
 
-import Statistics: mean, var, quantile
+import Statistics: mean, std, var, quantile
 import StatsBase: skewness, kurtosis
 import Distributions: cdf, pdf
 

@@ -44,6 +44,7 @@ end
 # Add statistical/distribution methods
 
 mean(d::PearsonAnalyticDistribution) = mean(distribution(d))
+std(d::PearsonAnalyticDistribution) = std(distribution(d))
 var(d::PearsonAnalyticDistribution) = var(distribution(d))
 skewness(d::PearsonAnalyticDistribution) = skewness(distribution(d))
 kurtosis(d::PearsonAnalyticDistribution) = kurtosis(distribution(d))
