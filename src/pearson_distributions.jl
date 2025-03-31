@@ -55,8 +55,13 @@ quantile(d::PearsonAnalyticDistribution, p) = quantile(distribution(d), p)
 
 """
     distribution(d::PearsonAnalyticDistribution)
+    distribution(d::PearsonTypeIII, n::Integer=1)
 
-Returns a `Distributions.Distribution` object corresponding to `d`.
+Returns a `Distributions.Distribution` object corresponding to `d`.  For
+`PearsonTypeIII` distributions, an optional parameter `n` may be given.  When
+`n` is given, the returned distribution represents the distribution that
+arises from averaging `n` samples from `d`.  Use the default value of `1` for no
+averaging.
 """
 function distribution end
 

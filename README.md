@@ -128,6 +128,9 @@ methods are supported for instances of these types:
   distribution at `±nsigma`.
 - `distribution(d::PearsonAnalyticDistribution)` returns a `Distributions.jl`
   distribution corresponding to `d`.
+- `distribution(d::PearsonTypeIII, n::Integer=1)` returns a `Distributions.jl`
+  distribution corresponding to the distribution that arises when averaging `n`
+  samples from `d`.  Use the default value of `1` for no averaing.
 - `relative_error(d::PearsonAnalyticDistribution, u4)` returns the relative
   error between the fourth moment of `d` and `u4` (typically the fourth moment
   of an `SKEstimator`)

@@ -31,8 +31,8 @@ function PearsonTypeIII(u2, u3)
 end
 
 # Documented in pearson_distributions.jl
-function distribution(d::PearsonTypeIII)
-    Gamma(d.shape, d.scale) + d.location
+function distribution(d::PearsonTypeIII, n::Integer=1)
+    Gamma(n * d.shape, d.scale)/n + d.location
 end
 
 # Documented in pearson_distributions.jl
