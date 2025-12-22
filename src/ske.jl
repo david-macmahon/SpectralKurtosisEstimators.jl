@@ -96,7 +96,7 @@ function pearson_distribution(ske::SKEstimator)
 end
 
 # Construct specific PearsonDistributions from an SKEstimator
-PearsonTypeIII(ske::SKEstimator) = PearsonTypeIII(ske.u2, ske.u3)
+PearsonTypeIII(ske::SKEstimator, n=1) = PearsonTypeIII(ske.u2, ske.u3, n)
 PearsonTypeIV(ske::SKEstimator) = PearsonTypeIV(ske.u1, ske.u2, ske.u3, ske.u4)
 PearsonTypeVI(ske::SKEstimator) = PearsonTypeVI(ske.u2, ske.u3)
 
