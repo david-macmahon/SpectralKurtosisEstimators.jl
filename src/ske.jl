@@ -53,6 +53,10 @@ function SKEstimator(M::Integer, N::Integer=1, d::Real=1)
     SKEstimator(float(M), float(N), d)
 end
 
+function SKEstimator(; M, N=1.0, d::Real=1)
+    SKEstimator(float(M), float(N), d)
+end
+
 # Statistics for SKEstimator
 mean(ske::SKEstimator) = ske.u1
 var(ske::SKEstimator) = ske.u2
