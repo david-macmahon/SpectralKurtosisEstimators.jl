@@ -12,7 +12,7 @@ end
 """
     PearsonTypeIV(u2, u3, u4)
 
-Construct a PeasonTypeIV distribution having second, third, and fourth central
+Construct a PearsonTypeIV distribution having second, third, and fourth central
 moments given by `u2`, `u3`, and `u4`.
 """
 function PearsonTypeIV(u1, u2, u3, u4)

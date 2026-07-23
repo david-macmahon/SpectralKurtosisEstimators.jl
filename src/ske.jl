@@ -91,7 +91,7 @@ function pearson_distribution(ske::SKEstimator)
             PearsonTypeVI(ske)
         end
     else
-        @error "Pearson criteron $κ < 0 not supported"
+        @error "Pearson criterion $κ < 0 not supported"
     end
 end
 

@@ -11,7 +11,7 @@ end
 """
     PearsonTypeIII(u2, u3)
 
-Construct a PeasonTypeIII distribution having second and third central moments
+Construct a PearsonTypeIII distribution having second and third central moments
 given by `u2` and `u3`.
 """
 function PearsonTypeIII(u2, u3)

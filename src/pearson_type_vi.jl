@@ -11,7 +11,7 @@ end
 """
     PearsonTypeVI(u2, u3)
 
-Construct a PeasonTypeVI distribution having second and third central moments
+Construct a PearsonTypeVI distribution having second and third central moments
 given by `u2` and `u3`.
 """
 function PearsonTypeVI(u2, u3)

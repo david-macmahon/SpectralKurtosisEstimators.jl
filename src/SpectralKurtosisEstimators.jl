@@ -30,7 +30,7 @@ Compute the spectral kurtosis estimate from:
   - Use `1/2` for real voltages
   - Use `1` for complex voltages
 
-The formulas used here is from equation 8 of:
+The formulas used here are from equation 8 of:
 "Monthly Notices of the Royal Astronomical Society". 406, L60-L64 (2010)
 doi:10.1111/j.1745-3933.2010.00882.x
 """
@@ -45,7 +45,7 @@ end
 """
     skhat(A::AbstractArray, ske::SKEstimator; dims=ndims(A))
 
-Compute generalized spectral kutosis estimate of `A` along `dims` as specified
+Compute generalized spectral kurtosis estimate of `A` along `dims` as specified
 by the `M` and `N` fields of `ske`.  `dims` must be an integer and defaults to
 the last dimension of `A`.  `ske.d` should be set to half the number of real
 samples that were pre-summed into each element of `A`.

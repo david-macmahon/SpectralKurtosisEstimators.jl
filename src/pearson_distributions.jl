@@ -69,7 +69,7 @@ function distribution end
     relative_error(d::PearsonAnalyticDistribution, known)
 
 Returns the (signed) relative error of `d`'s first non-fitted central moment and
-the known coresponding central moment value `known`.  For `PearsonTypeIII` and
+the known corresponding central moment value `known`.  For `PearsonTypeIII` and
 `PearsonTypeVI`, `known` should be the known fourth central moment.
 """
 function relative_error end
