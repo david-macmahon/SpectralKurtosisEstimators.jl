@@ -89,9 +89,9 @@ distribution objects have a common abstract supertype of `PearsonDistribution`.
 ### Pearson Type VI and Pearson Type III distributions
 
 The Pearson Type VI distribution is actually a location shifted [beta prime
-distribution]( https://en.wikipedia.org/wiki/Beta_prime_distribution).  The
+distribution](https://en.wikipedia.org/wiki/Beta_prime_distribution).  The
 Pearson Type III distribution is actually a location shifted [gamma
-distribution]( https://en.wikipedia.org/wiki/Gamma_distribution).  In fact,
+distribution](https://en.wikipedia.org/wiki/Gamma_distribution).  In fact,
 these now well known distributions originated from these earlier Pearson
 distributions.  These Pearson distributions are represented internally by the
 parameters of these well known distributions plus a location offset.
@@ -105,14 +105,14 @@ preferable for outlier detection.
 
 Pearson Type VI and Pearson Type III distributions are represented by the
 `PearsonTypeVI` and `PearsonTypeIII` types, resp.  They share a common abstract
-super-type, `PearsonaAnalyticDistribution`, because they can be represented by
+super-type, `PearsonAnalyticDistribution`, because they can be represented by
 well known distributions supported by `Distributions.jl`.  The following
 methods are supported for instances of these types:
 
 - `mean(d::PearsonAnalyticDistribution)` returns the mean of distribution `d`
-- `std(d::PearsonAnaliyicDistribution)` returns the standard deviation of
+- `std(d::PearsonAnalyticDistribution)` returns the standard deviation of
   distribution `d`
-- `var(d::PearsonAnaliyicDistribution)` returns the variance of distribution `d`
+- `var(d::PearsonAnalyticDistribution)` returns the variance of distribution `d`
 - `skewness(d::PearsonAnalyticDistribution)` returns the skewness of
   distribution `d`
 - `kurtosis(d::PearsonAnalyticDistribution)` returns the excess kurtosis of
@@ -130,7 +130,7 @@ methods are supported for instances of these types:
   distribution corresponding to `d`.
 - `distribution(d::PearsonTypeIII, n::Integer=1)` returns a `Distributions.jl`
   distribution corresponding to the distribution that arises when averaging `n`
-  samples from `d`.  Use the default value of `1` for no averaing.
+  samples from `d`.  Use the default value of `1` for no averaging.
 - `relative_error(d::PearsonAnalyticDistribution, u4)` returns the relative
   error between the fourth moment of `d` and `u4` (typically the fourth moment
   of an `SKEstimator`)
@@ -191,7 +191,7 @@ here:
 
 | Pearson criterion | Pearson distribution(s) |
 |:-----------------:|:------------------------|
-|      `κ < 0` .    | Type I (not supported)  |
+|      `κ < 0`      | Type I (not supported)  |
 |    `0 < κ < 1`    | Type IV                 |
 |      `1 < κ`      | Type VI, Type III       |
 
@@ -224,7 +224,7 @@ where:
 - `s1`: sum of power
 - `s2`: sum of squared power
 - `M`, `ske.M`: number of samples summed (e.g. "off-board" or "outer sum")
-- `N`, `ske.N`: number of samples pre-summed (e.g "on-board" or "inner sum")
+- `N`, `ske.N`: number of samples pre-summed (e.g. "on-board" or "inner sum")
 - `d`, `ske.d`: half the number of squared voltages (pre-summed) per input
   sample
   - Use `1/2` for single-pol real voltages
@@ -236,7 +236,7 @@ sized pre-allocated Array.
 
 ### Spectral kurtosis estimates of data in an Array
 
-The spectral kurtosis estimates of an Array cam be computed by calling this
+The spectral kurtosis estimates of an Array can be computed by calling this
 `skhat` method:
 
     skhat(A, ske::SKEstimator; dims=ndims(A))
@@ -254,4 +254,4 @@ will be `size(A, dims) ÷ (M*N)`.  If `M*N` does not divide `size(A, dims)`
 evenly then some number (less than `M*N`) of samples from the end of the `dims`
 dimension of `A` will not be used.
 
-This method allocate the intermediate and output Arrays each call.
+This method allocates the intermediate and output Arrays each call.
