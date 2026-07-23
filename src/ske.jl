@@ -9,6 +9,35 @@ struct SKEstimator
     u4::Float64
 end
 
+"""
+    SKEstimator(M, N=1, d=1)
+    SKEstimator(; M, N=1, d=1)
+
+Construct a generalized spectral kurtosis estimator with `M` outer sum addends,
+`N` inner sum addends, and shape parameter `d`.  The first four central moments
+(`u1`, `u2`, `u3`, `u4`) of the estimator are precomputed using the formulas
+from equation 8 of:
+
+> "Monthly Notices of the Royal Astronomical Society". 406, L60-L64 (2010)
+> doi:10.1111/j.1745-3933.2010.00882.x
+
+Arguments:
+
+- `M`: number of outer sum addends (must be `>= 2`)
+- `N`: number of inner sum addends (must be `>= 1`, defaults to `1`)
+- `d`: half the number of squared voltages summed together per input sample
+  (must be `> 0`, defaults to `1`).  This is the same as the shape parameter of
+  the [gamma distribution](https://en.wikipedia.org/wiki/Gamma_distribution).
+  - Use `1/2` for single-pol real voltages
+  - Use `1` for single-pol complex voltages or Stokes I from real voltages
+  - Use `2` for Stokes I from complex voltages
+
+The product `M*N*d` must be an integer.  The moments can be accessed via
+`mean`, `var`, `skewness`, and `kurtosis`, or directly through the `u1`, `u2`,
+`u3`, and `u4` fields.
+
+See also: [`skhat`](@ref), [`pearson_distribution`](@ref).
+"""
 function SKEstimator(M::Float64, N::Float64=1.0, d::Real=1)
     isinteger(M) || error("value of M ($M) must be an integer")
     isinteger(N) || error("value of N ($N) must be an integer")
