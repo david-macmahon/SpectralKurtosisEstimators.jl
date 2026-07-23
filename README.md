@@ -1,5 +1,8 @@
 # SpectralKurtosisEstimators.jl
 
+[![Stable docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://david-macmahon.github.io/SpectralKurtosisEstimators.jl/stable/)
+[![Dev docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://david-macmahon.github.io/SpectralKurtosisEstimators.jl/dev/)
+
 This package provides the `SKEstimator` type and methods for working with them.
 It is based on the series of spectral kurtosis papers by G. M. Nita and D. E.
 Gary circa 2007-2016:
