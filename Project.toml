@@ -18,7 +18,7 @@ Distributions = "0.25.118"
 Memoize = "0.4.4"
 Roots = "2.2.6,3"
 SpecialFunctions = "2.5.0"
-Statistics = "1.11.1"
+Statistics = "1.10"
 StatsBase = "0.34.4"
 
 [extras]
