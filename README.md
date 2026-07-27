@@ -247,7 +247,10 @@ The spectral kurtosis estimates of an Array can be computed by calling this
 This computes the generalized spectral kurtosis estimate of `A` along `dims` as
 specified by the `M` and `N` fields of `ske`.  `dims` must be an integer and
 defaults to the last dimension of `A`.  `ske.d` should be set to half the number
-of real samples that were pre-summed into each element of `A`.
+of real values that were pre-summed into each sample of `A`.  Specifically,
+`ske.N` is used here to specify additional "inner-sum" integration, so `d`
+should include a factor for any inner-sum addends already included in each
+sample of `A`.
 
 Named tuple `(; s1, sk)` is returned, where `s1` is the summed power and `sk` is
 the spectral kurtosis.
