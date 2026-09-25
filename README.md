@@ -2,6 +2,7 @@
 
 [![Stable docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://david-macmahon.github.io/SpectralKurtosisEstimators.jl/stable/)
 [![Dev docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://david-macmahon.github.io/SpectralKurtosisEstimators.jl/dev/)
+[![Build Status](https://github.com/david-macmahon/SpectralKurtosisEstimators.jl/actions/workflows/Test.yml/badge.svg)](https://github.com/david-macmahon/SpectralKurtosisEstimators.jl/actions/workflows/Test.yml)
 
 This package provides the `SKEstimator` type and methods for working with them.
 It is based on the series of spectral kurtosis papers by G. M. Nita and D. E.
