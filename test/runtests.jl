@@ -243,6 +243,13 @@ end
     end
 end
 
+@testset "pearson_distribution errors" begin
+    # κ < 0 (the Pearson Type I region) is not supported and throws
+    ske = SKEstimator(3, 1, 0.5)
+    @test pearson_criterion(ske) < 0
+    @test_throws ErrorException pearson_distribution(ske)
+end
+
 @testset "non-integer MNd Monte Carlo" begin
     # For per-sample powers with shape d, the accumulated sample of N addends
     # is Gamma(N*d) distributed for any real shape, so sampling Gamma(N*d)

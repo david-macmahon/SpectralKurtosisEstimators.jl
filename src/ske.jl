@@ -116,7 +116,8 @@ Construct the optimal PearsonDistribution for SKEstimator `ske`.  If the Pearson
 criterion for `ske` is between 0 and 1, a `PearsonTypeIV` distribution will be
 returned.  If the Pearson criterion is 1 or greater, the `PearsonTypeIII` or
 `PearsonTypeVI` distribution for `ske` with the lower relative error in the
-fourth moment will be returned.
+fourth moment will be returned.  A Pearson criterion of 0 or less is not
+supported and will throw an `ErrorException`.
 """
 function pearson_distribution(ske::SKEstimator)
     κ = pearson_criterion(ske)
@@ -132,7 +133,7 @@ function pearson_distribution(ske::SKEstimator)
             PearsonTypeVI(ske)
         end
     else
-        @error "Pearson criterion $κ < 0 not supported"
+        error("Pearson criterion $κ <= 0 is not supported")
     end
 end
 
