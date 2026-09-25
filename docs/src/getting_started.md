@@ -31,6 +31,16 @@ The first four statistical moments of the corresponding generalized spectral
 kurtosis estimator are precomputed and stored in the `u1`, `u2`, `u3`, and `u4`
 fields.
 
+`M` and `N` must be integers, but `d` may be any positive real number — the
+precomputed moments are valid even when `M*N*d` is not an integer.  If `d` is
+passed as a `Rational` (e.g. `1//2`), the moments are stored exactly as
+`Rational{BigInt}` values; otherwise they are stored as `Float64`:
+
+```julia
+exact = SKEstimator(3, 1, 1//2)
+exact.u2 == 3//7  # true — exact rational moments
+```
+
 ## Computing spectral kurtosis estimates
 
 The [`skhat`](@ref) function computes spectral kurtosis estimates from data.

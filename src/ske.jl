@@ -1,12 +1,12 @@
-struct SKEstimator
+struct SKEstimator{T<:Real}
     M::Int
     N::Int
-    d::Float64
+    d::T
 
-    u1::Float64
-    u2::Float64
-    u3::Float64
-    u4::Float64
+    u1::T
+    u2::T
+    u3::T
+    u4::T
 end
 
 """
@@ -16,7 +16,7 @@ end
 Construct a generalized spectral kurtosis estimator with `M` outer sum addends,
 `N` inner sum addends, and shape parameter `d`.  The first four central moments
 (`u1`, `u2`, `u3`, `u4`) of the estimator are precomputed using the formulas
-from equation 8 of:
+from equation 9 of:
 
 > "Monthly Notices of the Royal Astronomical Society". 406, L60-L64 (2010)
 > doi:10.1111/j.1745-3933.2010.00882.x
@@ -32,26 +32,44 @@ Arguments:
   - Use `1` for single-pol complex voltages or Stokes I from real voltages
   - Use `2` for Stokes I from complex voltages
 
-The product `M*N*d` must be an integer.  The moments can be accessed via
-`mean`, `var`, `skewness`, and `kurtosis`, or directly through the `u1`, `u2`,
-`u3`, and `u4` fields.
+`M` and `N` must be integers, but `d` may be any positive real number.  The
+moment formulas are a closed-form evaluation of the gamma-function expressions
+of equation 9 of the reference, valid for any `M*N*d > 0`.  The eltype `T` of
+the returned `SKEstimator{T}` is `Rational{BigInt}` when `d` is a `Rational`
+(in which case the moments are exact), and `Float64` otherwise.  The moments
+can be accessed via `mean`, `var`, `skewness`, and `kurtosis`, or directly
+through the `u1`, `u2`, `u3`, and `u4` fields.
 
 See also: [`skhat`](@ref), [`pearson_distribution`](@ref).
 """
-function SKEstimator(M::Float64, N::Float64=1.0, d::Real=1)
+function SKEstimator(M::Real, N::Real=1, d::Real=1)
+    # Rational d gets exact moments in Rational{BigInt} arithmetic; anything
+    # else (including plain Integers, for backwards-compatible pragmatics)
+    # computes in Float64
+    T = d isa Rational ? Rational{BigInt} : Float64
+
     isinteger(M) || error("value of M ($M) must be an integer")
     isinteger(N) || error("value of N ($N) must be an integer")
-    isinteger(M*N*d) || error("value of M*N*d ($(M*N*d)) must be an integer")
+    Mint, Nint = Int(M), Int(N)
 
-    M >= 2 || error("M ($M) must be >= 2")
-    N >= 1 || error("N ($N) must be >= 1")
+    Mint >= 2 || error("M ($Mint) must be >= 2")
+    Nint >= 1 || error("N ($Nint) must be >= 1")
     d > 0 || error("d ($d) must be > 0")
-try
+
+    # Do all arithmetic in T: Float64 avoids Int64 overflow in M^2 etc. for
+    # huge M, and Rational{BigInt} keeps Rational inputs exact
+    M, N, d = T(M), T(N), T(d)
     Nd = N*d
     MNd = M*Nd
 
-    u1=1
+    u1=one(T)
 
+    # Central moments, equation 9 of Nita & Gary (2010).  The gamma-function
+    # ratios of equation 9 are evaluated in closed (product) form, which is
+    # algebraically identical for all real MNd > 0:
+    #   Γ(MNd+2)/Γ(MNd+4) = 1/((MNd+2)(MNd+3))
+    #   Γ(MNd+2)/Γ(MNd+6) = 1/((MNd+2)(MNd+3)(MNd+4)(MNd+5))
+    #   Γ(MNd+2)/Γ(MNd+8) = 1/((MNd+2)(MNd+3)(MNd+4)(MNd+5)(MNd+6)(MNd+7))
     u2=(
         (2M^2 * Nd * (1+Nd))
         /
@@ -71,20 +89,10 @@ try
         ((M-1)^3 * (MNd+7) * (MNd+6) * (MNd+5) * (MNd+4) * (MNd+3) * (MNd+2))
     )
 
-    SKEstimator(M, N, d, u1, u2, u3, u4)
-catch
-    @show M N d
-    rethrow()
-end
+    SKEstimator{T}(Mint, Nint, d, u1, u2, u3, u4)
 end
 
-function SKEstimator(M::Integer, N::Integer=1, d::Real=1)
-    SKEstimator(float(M), float(N), d)
-end
-
-function SKEstimator(; M, N=1.0, d::Real=1)
-    SKEstimator(float(M), float(N), d)
-end
+SKEstimator(; M, N=1, d::Real=1) = SKEstimator(M, N, d)
 
 # Statistics for SKEstimator
 mean(ske::SKEstimator) = ske.u1

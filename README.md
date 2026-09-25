@@ -75,6 +75,12 @@ where:
 - `d`: half the number of squared voltages summed together per input sample (aka
   the *shape* parameter).
 
+`M` and `N` must be integers (`M >= 2` and `N >= 1`), but `d` may be any
+positive real number: the precomputed moments are valid for any `M*N*d > 0`,
+which need not be an integer.  If `d` is a `Rational`, the `SKEstimator` stores
+the moments as exact `Rational{BigInt}` values; otherwise they are stored as
+`Float64`.
+
 ## Pearson distributions
 
 [Pearson](https://en.wikipedia.org/wiki/Karl_Pearson) derived a [set of
