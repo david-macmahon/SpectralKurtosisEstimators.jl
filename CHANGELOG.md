@@ -8,6 +8,8 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-29
+
 ### Added
 - `s1s2` and `s1s2!`: fused single-pass computation of the `s1`/`s2` inputs of
   `skhat` from power data, with `s1s2!` writing into preallocated, reusable
