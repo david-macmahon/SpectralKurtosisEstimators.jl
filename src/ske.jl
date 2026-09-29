@@ -9,6 +9,9 @@ struct SKEstimator{T<:Real}
     u4::T
 end
 
+# Broadcast an SKEstimator as a scalar so that e.g. `skhat.(s1, s2, ske)` works
+Base.broadcastable(ske::SKEstimator) = Ref(ske)
+
 """
     SKEstimator(M, N=1, d=1)
     SKEstimator(; M, N=1, d=1)

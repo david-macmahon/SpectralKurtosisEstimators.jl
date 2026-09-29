@@ -273,3 +273,141 @@ end
         end
     end
 end
+
+# -----------------------------------------------------------------------------
+# Tests for the s1s2/s1s2! fused S1/S2 kernels
+#
+# s1s2 computes the s1 and s2 inputs of skhat with fused reductions that never
+# materialize a full-size intermediate array.  The reference below is the
+# original three-reduction implementation, against which bit-identical (==)
+# agreement is asserted: s1s2 uses the same underlying reduction kernels
+# (sum! and Base.mapreducedim!) as sum(...; dims), so results must match exactly.
+# -----------------------------------------------------------------------------
+
+function _s1s2_reference(A::AbstractArray, M, N; dims::Integer=ndims(A))
+    T = size(A, dims) ÷ (M*N)
+    T > 0 || error("$(size(A, dims)) is too few samples for M=$(M) and N=$(N)")
+    axesA = axes(A)
+    Ausable = M*N*T == size(A, dims) ? A :
+        view(A, axesA[1:dims-1]..., 1:M*N*T, axesA[dims+1:end]...)
+    Anmt = reshape(Ausable, axesA[1:dims-1]..., N, M, T, axesA[dims+1:end]...)
+    s0 = dropdims(sum(Anmt; dims); dims)
+    s1 = dropdims(sum(s0; dims); dims)
+    s2 = dropdims(sum(abs2, s0; dims); dims)
+    (s1, s2)
+end
+
+@testset "s1s2" begin
+    @testset "matches reference" begin
+        @testset "size=$sz dims=$dims (M,N)=($M,$N)" for (sz, dims, M, N) in (
+            ((16, 200),   2, 2, 1),
+            ((16, 200),   2, 8, 1),
+            ((16, 200),   2, 4, 3),
+            ((16, 200),   2, 5, 4),
+            ((16, 199),   2, 4, 3),   # M*N does not divide size(A, dims): truncation
+            ((4, 5, 120), 3, 4, 3),   # 3-D batch, reducing dims=3
+            ((4, 5, 120), 3, 5, 4),
+            ((16, 50),    1, 4, 3),   # reducing dims=1
+        )
+            A = rand(MersenneTwister(hash((sz, dims, M, N))), sz...)
+            (; s1, s2) = s1s2(A, M, N; dims)
+            s1r, s2r = _s1s2_reference(A, M, N; dims)
+            @test s1 == s1r
+            @test s2 == s2r
+            outsize = (sz[1:dims-1]..., sz[dims] ÷ (M*N), sz[dims+1:end]...)
+            @test size(s1) == outsize && size(s2) == outsize
+
+            # SKEstimator convenience method agrees
+            ske = SKEstimator(M, N, 1)
+            s1s = s1s2(A, ske; dims)
+            @test s1s.s1 == s1r && s1s.s2 == s2r
+        end
+    end
+
+    @testset "collapsed call" begin
+        # Omitting M and N collapses the entire dims dimension into a single
+        # accumulation per slice: M = size(A, dims), N = 1
+        A = rand(MersenneTwister(20260928), 16, 200)
+        r = s1s2(A)
+        s1r, s2r = s1s2(A, 200, 1)
+        @test r.s1 == s1r && r.s2 == s2r
+        @test size(r.s1) == (16, 1) && size(r.s2) == (16, 1)
+
+        # non-default dims: M follows dims
+        A3 = rand(MersenneTwister(20260928), 4, 5, 120)
+        r3 = s1s2(A3; dims=3)
+        s1r3, s2r3 = s1s2(A3, 120, 1; dims=3)
+        @test r3.s1 == s1r3 && r3.s2 == s2r3
+        @test size(r3.s1) == (4, 5, 1) && size(r3.s2) == (4, 5, 1)
+
+        # in-place collapsed call: garbage buffers fully overwritten
+        b1 = fill!(Array{Float64}(undef, 16, 1),  1e300)
+        b2 = fill!(Array{Float64}(undef, 16, 1), -1e300)
+        result = s1s2!(b1, b2, A)
+        @test result.s1 === b1 && result.s2 === b2
+        @test b1 == s1r && b2 == s2r
+        s1s2!(b1, b2, A)
+        @test b1 == s1r && b2 == s2r
+
+        # one SK value per channel via the explicit estimator
+        ske = SKEstimator(200, 1, 1)
+        sk = skhat.(s1r, s2r, ske)
+        @test size(sk) == (16, 1)
+        @test all(isfinite, sk)
+
+        # degenerate: a single sample along dims gives M = 1, T = 1
+        A1 = rand(MersenneTwister(20260928), 4, 1)
+        r1 = s1s2(A1)
+        @test r1.s1 == A1
+        @test size(r1.s1) == (4, 1)
+    end
+
+    @testset "s1s2! overwrites garbage buffers" begin
+        A = rand(MersenneTwister(20260928), 16, 200)
+        M, N = 4, 3
+        s1r, s2r = _s1s2_reference(A, M, N)
+        buf1 = fill!(Array{Float64}(undef, 16, 16),  1e300)
+        buf2 = fill!(Array{Float64}(undef, 16, 16), -1e300)
+        result = s1s2!(buf1, buf2, A, M, N)
+        @test result.s1 === buf1 && result.s2 === buf2
+        @test buf1 == s1r && buf2 == s2r
+
+        # idempotent: repeated calls into the same buffers give identical results
+        s1s2!(buf1, buf2, A, M, N)
+        @test buf1 == s1r && buf2 == s2r
+
+        # SKEstimator convenience method agrees
+        buf3 = similar(buf1); buf4 = similar(buf2)
+        s1s2!(buf3, buf4, A, SKEstimator(M, N, 1))
+        @test buf3 == s1r && buf4 == s2r
+    end
+
+    @testset "errors" begin
+        A = rand(MersenneTwister(20260928), 16, 200)
+        good = Array{Float64}(undef, 16, 16)
+        @test_throws DimensionMismatch s1s2!(zeros(15, 16), zeros(16, 16), A, 4, 3)
+        @test_throws DimensionMismatch s1s2!(zeros(16, 16), zeros(15, 16), A, 4, 3)
+        @test_throws ArgumentError s1s2!(good, good, A,  0, 1)
+        @test_throws ArgumentError s1s2!(good, good, A, -2, 1)
+        @test_throws ArgumentError s1s2!(good, good, A,  4, 0)
+        @test_throws ArgumentError s1s2!(good, good, A,  4, -1)
+        @test_throws ErrorException s1s2(A, 201, 1)         # M*N > size(A, dims)
+        @test_throws ErrorException s1s2(A, 60, 4)          # M*N > size(A, dims)
+        @test_throws ErrorException s1s2!(good, good, A, 60, 4)
+    end
+
+    @testset "skhat(A) consistency" begin
+        A = rand(MersenneTwister(20260928), 16, 200)
+        ske = SKEstimator(4, 3, 1)
+        (; s1, sk) = skhat(A, ske)
+        s1r, s2r = _s1s2_reference(A, 4, 3)
+        @test s1 == s1r
+        @test sk == skhat(s1r, s2r, ske)
+
+        # same result via the documented allocation-free pipeline
+        buf1 = similar(s1); buf2 = similar(s1); skbuf = similar(sk)
+        s1s2!(buf1, buf2, A, ske)
+        skbuf .= skhat.(buf1, buf2, ske)
+        @test buf1 == s1 && skbuf == sk
+    end
+end

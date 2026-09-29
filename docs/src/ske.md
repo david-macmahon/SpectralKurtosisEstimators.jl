@@ -3,6 +3,8 @@
 ```@docs
 SKEstimator
 skhat
+s1s2
+s1s2!
 pearson_criterion
 pearson_distribution
 ```

@@ -267,4 +267,37 @@ will be `size(A, dims) ÷ (M*N)`.  If `M*N` does not divide `size(A, dims)`
 evenly then some number (less than `M*N`) of samples from the end of the `dims`
 dimension of `A` will not be used.
 
-This method allocates the intermediate and output Arrays each call.
+This method allocates the output Arrays each call.  For allocation-free
+processing, use the `s1s2!` plus broadcast `skhat` pipeline described below.
+
+### Computing `s1` and `s2` from an Array of data
+
+The `s1s2` and `s1s2!` functions compute the summed power `s1` and the sum of
+squared power `s2` of the power data in an Array directly, with fused
+reductions that never materialize a full-size intermediate Array:
+
+    s1s2(A, M, N; dims=ndims(A))
+    s1s2(A, ske::SKEstimator; dims=ndims(A))
+    s1s2(A; dims=ndims(A))
+    s1s2!(s1, s2, A, M, N; dims=ndims(A))
+    s1s2!(s1, s2, A, ske::SKEstimator; dims=ndims(A))
+    s1s2!(s1, s2, A; dims=ndims(A))
+
+`s1s2` returns named tuple `(; s1, s2)` and allocates its output Arrays each
+call.  `s1s2!` instead writes the results into the preallocated Arrays `s1`
+and `s2`, overwriting their contents, so that buffers can be reused across
+calls.  Combining `s1s2!` with broadcast makes the whole pipeline
+allocation-free:
+
+    s1 = similar(A, outsize)  # outsize is size(A) with dims -> size(A, dims) ÷ (M*N)
+    s2 = similar(s1)
+    sk = similar(s1)
+    s1s2!(s1, s2, A, ske)
+    sk .= skhat.(s1, s2, ske)
+
+Omitting `M` and `N` collapses the entire `dims` dimension into a single
+accumulation per slice (`M = size(A, dims)` and `N = 1`), e.g. producing a
+single SK value per channel from a spectrogram:
+
+    (; s1, s2) = s1s2(A)  # (nfreq, 1), collapsing the time axis
+    sk = skhat.(s1, s2, SKEstimator(size(A, ndims(A))))  # one SK value per channel

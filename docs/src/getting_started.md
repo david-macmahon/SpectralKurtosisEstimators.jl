@@ -72,6 +72,33 @@ result = skhat(A, ske)
 `result` is a named tuple `(; s1, sk)` where `s1` is the summed power and `sk`
 is the spectral kurtosis.  See the [SKEstimator](@ref) page for details.
 
+### Computing `S1` and `S2` values
+
+The [`s1s2`](@ref) function computes the `S1` and `S2` values of an Array of
+power data directly, using fused reductions that never materialize a full-size
+intermediate Array:
+
+```julia
+s1, s2 = s1s2(A, ske)   # named tuple (; s1, s2)
+```
+
+For allocation-free processing, use the in-place [`s1s2!`](@ref) to write into
+reusable buffers and broadcast `skhat` into a preallocated output Array:
+
+```julia
+s1s2!(s1, s2, A, ske)
+sk .= skhat.(s1, s2, ske)
+```
+
+Omitting `M` and `N` collapses the entire reduction dimension into a single
+accumulation per slice, e.g. to compute one SK value per channel of a
+spectrogram:
+
+```julia
+(; s1, s2) = s1s2(A)  # collapse the last dimension: M = size(A, 2), N = 1
+sk = skhat.(s1, s2, SKEstimator(size(A, 2)))
+```
+
 ## Choosing thresholds
 
 Outlier detection is typically done by comparing spectral kurtosis values

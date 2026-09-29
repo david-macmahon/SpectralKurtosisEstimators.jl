@@ -8,6 +8,24 @@ and this project aims to adhere to [Semantic Versioning](https://semver.org/)
 
 ## [Unreleased]
 
+### Added
+- `s1s2` and `s1s2!`: fused single-pass computation of the `s1`/`s2` inputs of
+  `skhat` from power data, with `s1s2!` writing into preallocated, reusable
+  buffers
+- `s1s2(A; dims)` and `s1s2!(s1, s2, A; dims)`: collapsing convenience forms
+  that default to `M = size(A, dims)` and `N = 1`, reducing the whole `dims`
+  axis into a single accumulation per slice (e.g. one SK value per channel)
+
+### Changed
+- `skhat(A, ske)` is built on the fused `s1s2` kernels and no longer
+  materializes a full-size intermediate Array; for `N = 1` this is several
+  times faster and reduces allocations by more than an order of magnitude
+
+### Fixed
+- Broadcasting an `SKEstimator` as a scalar, e.g. `skhat.(s1, s2, ske)`, now
+  works; previously it threw a `MethodError` despite being the pattern shown
+  in the Getting Started guide
+
 ## [0.4.0] - 2026-09-25
 
 ### Added
